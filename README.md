@@ -15,12 +15,12 @@ A CLI to guide with web applications development and deployment
 <!-- tocstop -->
 # Usage
 <!-- usage -->
-```bash
+```sh-session
 $ npm install -g prigas
 $ prg COMMAND
 running command...
 $ prg (--version)
-prg/0.0.0 darwin-arm64 node-v20.12.2
+prigas/0.0.0 win32-x64 node-v20.12.2
 $ prg --help [COMMAND]
 USAGE
   $ prg COMMAND
@@ -65,7 +65,7 @@ EXAMPLES
   hello friend from oclif! (./src/commands/hello/index.ts)
 ```
 
-_See code: [src/commands/hello/index.ts](https://github.com/mdonnalley/prg/blob/v0.0.0/src/commands/hello/index.ts)_
+_See code: [src/commands/hello/index.ts](https://github.com/prigas-dev/prigas/blob/v0.0.0/src/commands/hello/index.ts)_
 
 ## `prg hello world`
 
@@ -83,7 +83,7 @@ EXAMPLES
   hello world! (./src/commands/hello/world.ts)
 ```
 
-_See code: [src/commands/hello/world.ts](https://github.com/mdonnalley/prg/blob/v0.0.0/src/commands/hello/world.ts)_
+_See code: [src/commands/hello/world.ts](https://github.com/prigas-dev/prigas/blob/v0.0.0/src/commands/hello/world.ts)_
 
 ## `prg help [COMMAND]`
 
@@ -103,7 +103,7 @@ DESCRIPTION
   Display help for prg.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.0.21/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.11/src/commands/help.ts)_
 
 ## `prg plugins`
 
@@ -126,7 +126,7 @@ EXAMPLES
   $ prg plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.7/src/commands/plugins/index.ts)_
 
 ## `prg plugins add PLUGIN`
 
@@ -151,7 +151,7 @@ GLOBAL FLAGS
 DESCRIPTION
   Installs a plugin into prg.
 
-  Uses bundled npm executable to install plugins into /Users/mdonnalley/.local/share/prg
+  Uses npm to install plugins.
 
   Installation of a user-installed plugin will override a core plugin.
 
@@ -200,7 +200,7 @@ EXAMPLES
   $ prg plugins inspect myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/inspect.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.7/src/commands/plugins/inspect.ts)_
 
 ## `prg plugins install PLUGIN`
 
@@ -225,7 +225,7 @@ GLOBAL FLAGS
 DESCRIPTION
   Installs a plugin into prg.
 
-  Uses bundled npm executable to install plugins into /Users/mdonnalley/.local/share/prg
+  Uses npm to install plugins.
 
   Installation of a user-installed plugin will override a core plugin.
 
@@ -249,7 +249,7 @@ EXAMPLES
     $ prg plugins install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.7/src/commands/plugins/install.ts)_
 
 ## `prg plugins link PATH`
 
@@ -279,7 +279,7 @@ EXAMPLES
   $ prg plugins link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.7/src/commands/plugins/link.ts)_
 
 ## `prg plugins remove [PLUGIN]`
 
@@ -320,7 +320,7 @@ FLAGS
   --reinstall  Reinstall all plugins after uninstalling.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/reset.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.7/src/commands/plugins/reset.ts)_
 
 ## `prg plugins uninstall [PLUGIN]`
 
@@ -348,7 +348,7 @@ EXAMPLES
   $ prg plugins uninstall myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.7/src/commands/plugins/uninstall.ts)_
 
 ## `prg plugins unlink [PLUGIN]`
 
@@ -392,5 +392,5 @@ DESCRIPTION
   Update installed plugins.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.7/src/commands/plugins/update.ts)_
 <!-- commandsstop -->

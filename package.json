@@ -1,12 +1,13 @@
 {
+  "packageManager": "pnpm@9.10.0+sha256.355a8ab8dbb6ad41befbef39bc4fd6b5df85e12761d2724bd01f13e878de4b13",
   "name": "prigas",
   "description": "A CLI to guide with web applications development and deployment",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Victor Machado",
   "bin": {
     "prg": "./bin/run.js"
   },
-  "bugs": "https://github.com/prigas-dev/https://github.com/prigas-dev/prigas/issues",
+  "bugs": "https://github.com/prigas-dev/prigas/issues",
   "dependencies": {
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
@@ -37,7 +38,7 @@
     "/dist",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/prigas-dev/https://github.com/prigas-dev/prigas",
+  "homepage": "https://prigas.dev",
   "keywords": [
     "oclif"
   ],
@@ -59,7 +60,7 @@
       }
     }
   },
-  "repository": "prigas-dev/https://github.com/prigas-dev/prigas",
+  "repository": "https://github.com/prigas-dev/prigas",
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts",
@@ -69,6 +70,5 @@
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md"
   },
-  "types": "dist/index.d.ts",
-  "packageManager": "pnpm@9.10.0+sha256.355a8ab8dbb6ad41befbef39bc4fd6b5df85e12761d2724bd01f13e878de4b13"
+  "types": "dist/index.d.ts"
 }
