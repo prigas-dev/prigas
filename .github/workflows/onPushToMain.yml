@@ -12,8 +12,21 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: package.json
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
       - name: Check if version already exists
         id: version-check
         run: |
@@ -30,11 +43,13 @@ jobs:
             echo "skipped=false" >> $GITHUB_OUTPUT
             echo "tag=v$package_version" >> $GITHUB_OUTPUT
           fi
+
       - name: Setup git
         if: ${{ steps.version-check.outputs.skipped == 'false' }}
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
+
       - name: Generate oclif README
         if: ${{ steps.version-check.outputs.skipped == 'false' }}
         id: oclif-readme
@@ -46,6 +61,7 @@ jobs:
             git commit -am "chore: update README.md"
             git push -u origin ${{ github.ref_name }}
           fi
+
       - name: Create Github Release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
         if: ${{ steps.version-check.outputs.skipped == 'false' }}
