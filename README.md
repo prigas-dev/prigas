@@ -20,7 +20,7 @@ $ npm install -g prigas
 $ prg COMMAND
 running command...
 $ prg (--version)
-prigas/0.0.1 linux-x64 node-v20.17.0
+prigas/0.0.2 linux-x64 node-v20.17.0
 $ prg --help [COMMAND]
 USAGE
   $ prg COMMAND
