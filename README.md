@@ -20,7 +20,7 @@ $ npm install -g prigas
 $ prg COMMAND
 running command...
 $ prg (--version)
-prigas/0.0.0 win32-x64 node-v20.12.2
+prigas/0.0.1 linux-x64 node-v20.17.0
 $ prg --help [COMMAND]
 USAGE
   $ prg COMMAND
@@ -29,8 +29,6 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`prg hello PERSON`](#prg-hello-person)
-* [`prg hello world`](#prg-hello-world)
 * [`prg help [COMMAND]`](#prg-help-command)
 * [`prg plugins`](#prg-plugins)
 * [`prg plugins add PLUGIN`](#prg-plugins-add-plugin)
@@ -42,48 +40,6 @@ USAGE
 * [`prg plugins uninstall [PLUGIN]`](#prg-plugins-uninstall-plugin)
 * [`prg plugins unlink [PLUGIN]`](#prg-plugins-unlink-plugin)
 * [`prg plugins update`](#prg-plugins-update)
-
-## `prg hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ prg hello PERSON -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ prg hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [src/commands/hello/index.ts](https://github.com/prigas-dev/prigas/blob/v0.0.0/src/commands/hello/index.ts)_
-
-## `prg hello world`
-
-Say hello world
-
-```
-USAGE
-  $ prg hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ prg hello world
-  hello world! (./src/commands/hello/world.ts)
-```
-
-_See code: [src/commands/hello/world.ts](https://github.com/prigas-dev/prigas/blob/v0.0.0/src/commands/hello/world.ts)_
 
 ## `prg help [COMMAND]`
 
