@@ -65,6 +65,13 @@ jobs:
             git push -u origin ${{ github.ref_name }}
           fi
 
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_SECRET }}
+
       - name: Create Github Release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
         if: ${{ steps.version-check.outputs.skipped == 'false' }}
@@ -72,5 +79,7 @@ jobs:
           name: ${{ steps.version-check.outputs.tag }}
           tag: ${{ steps.version-check.outputs.tag }}
           commit: ${{ github.ref_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Using the GithubApp token instead of the workflow's to enable triggering the release
+          # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow#triggering-a-workflow-from-a-workflow
+          token: ${{ steps.generate-token.outputs.token }}
           skipIfReleaseExists: true
