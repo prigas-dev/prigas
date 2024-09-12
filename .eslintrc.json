@@ -1,3 +1,8 @@
 {
-  "extends": ["oclif", "oclif-typescript", "prettier"]
+  "extends": ["oclif", "oclif-typescript", "prettier"],
+  "rules": {
+    "camelcase": "off",
+    "prefer-arrow-callback": "off",
+    "unicorn/prefer-ternary": "off"
+  }
 }

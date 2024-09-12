@@ -6,11 +6,19 @@
     "moduleResolution": "node16",
     "outDir": "dist",
     "rootDir": "src",
+    "skipLibCheck": true,
     "strict": true,
     "target": "es2022"
   },
-  "include": ["./src/**/*"],
   "ts-node": {
     "esm": true
-  }
+  },
+  "references": [
+    {
+      "path": "./tsconfig.test.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
 }

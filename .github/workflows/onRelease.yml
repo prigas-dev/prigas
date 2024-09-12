@@ -27,6 +27,27 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build
+        run: pnpm build
+
+      - name: Generate zip files for templates
+        run: |
+          mkdir zips
+          for dir in templates/*; do
+            template_name=$(basename "$dir")
+            # Ignore directories that start with _
+            if [[ "$template_name" != _* ]]; then
+              zip -r "zips/template-${template_name}.zip" "$dir"
+            fi
+          done
+
+      - name: Upload templates to release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            zips/*.zip
+
       - name: Publish
         uses: JS-DevTools/npm-publish@19c28f1ef146469e409470805ea4279d47c3d35c
         with:

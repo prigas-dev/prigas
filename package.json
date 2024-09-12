@@ -2,33 +2,32 @@
   "packageManager": "pnpm@9.10.0+sha256.355a8ab8dbb6ad41befbef39bc4fd6b5df85e12761d2724bd01f13e878de4b13",
   "name": "prigas",
   "description": "A CLI to guide with web applications development and deployment",
-  "version": "0.0.2",
+  "version": "0.0.3-beta.3",
   "author": "Victor Machado",
   "bin": {
     "prg": "./bin/run.js"
   },
   "bugs": "https://github.com/prigas-dev/prigas/issues",
   "dependencies": {
+    "@inquirer/prompts": "^5.5.0",
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
-    "@oclif/plugin-plugins": "^5"
+    "jszip": "^3.10.1"
   },
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^4",
-    "@types/chai": "^4",
-    "@types/mocha": "^10",
     "@types/node": "^18",
-    "chai": "^4",
     "eslint": "^8",
     "eslint-config-oclif": "^5",
     "eslint-config-oclif-typescript": "^3",
     "eslint-config-prettier": "^9",
-    "mocha": "^10",
     "oclif": "^4",
     "shx": "^0.3.3",
     "ts-node": "^10",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^2.0.5",
+    "vitest-mock-extended": "^2.0.2"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -44,31 +43,26 @@
   ],
   "license": "AGPL-3.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "oclif": {
     "bin": "prg",
     "dirname": "prg",
     "commands": "./dist/commands",
     "plugins": [
-      "@oclif/plugin-help",
-      "@oclif/plugin-plugins"
+      "@oclif/plugin-help"
     ],
-    "topicSeparator": " ",
-    "topics": {
-      "hello": {
-        "description": "Say hello to the world and others"
-      }
-    }
+    "topicSeparator": " "
   },
   "repository": "https://github.com/prigas-dev/prigas",
   "scripts": {
-    "build": "shx rm -rf dist && tsc -b",
+    "dev": "./bin/dev",
+    "build": "tsc --project tsconfig.app.json",
     "lint": "eslint . --ext .ts",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "pnpm run lint",
-    "prepack": "oclif manifest && oclif readme",
-    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "prepack": "pnpm run build && oclif manifest && oclif readme",
+    "test": "vitest",
     "version": "oclif readme && git add README.md"
-  },
-  "types": "dist/index.d.ts"
+  }
 }
