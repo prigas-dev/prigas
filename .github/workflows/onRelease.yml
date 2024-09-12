@@ -35,14 +35,22 @@ jobs:
 
       - name: Generate zip files for templates
         run: |
-          mkdir zips
-          for dir in templates/*; do
-            template_name=$(basename "$dir")
-            # Ignore directories that start with _
-            if [[ "$template_name" != _* ]]; then
-              # Create a zip file with the contents of the directory at the root
-              (cd "$dir" && zip -r "../zips/template-${template_name}.zip" .)
-            fi
+          mkdir -p zips
+          for folder in templates/*/; do
+              templatename=$(basename "$folder")
+              # Ignore template names starting with underscore
+              if [[ $templatename == _* ]]; then
+                  echo "Skipping $templatename"
+                  continue
+              fi
+              zipfile="zips/template-${templatename}.zip"
+
+              # Create the zip file with template contents at the root level of the zip
+              pushd "$folder" > /dev/null
+              zip -r "../../$zipfile" . 
+              popd > /dev/null
+
+              echo "Created $zipfile"
           done
 
       - name: Upload templates to release
