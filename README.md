@@ -20,7 +20,7 @@ $ npm install -g prigas
 $ prg COMMAND
 running command...
 $ prg (--version)
-prigas/0.0.3-beta.3 linux-x64 node-v20.17.0
+prigas/0.0.3-beta.4 linux-x64 node-v20.17.0
 $ prg --help [COMMAND]
 USAGE
   $ prg COMMAND
@@ -70,5 +70,5 @@ EXAMPLES
   $ prg new
 ```
 
-_See code: [src/commands/new.ts](https://github.com/prigas-dev/prigas/blob/v0.0.3-beta.3/src/commands/new.ts)_
+_See code: [src/commands/new.ts](https://github.com/prigas-dev/prigas/blob/v0.0.3-beta.4/src/commands/new.ts)_
 <!-- commandsstop -->
