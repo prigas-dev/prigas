@@ -20,7 +20,7 @@ $ npm install -g prigas
 $ prg COMMAND
 running command...
 $ prg (--version)
-prigas/0.0.3-beta.2 win32-x64 node-v20.12.2
+prigas/0.0.3-beta.3 linux-x64 node-v20.17.0
 $ prg --help [COMMAND]
 USAGE
   $ prg COMMAND
@@ -30,6 +30,7 @@ USAGE
 # Commands
 <!-- commands -->
 * [`prg help [COMMAND]`](#prg-help-command)
+* [`prg new`](#prg-new)
 
 ## `prg help [COMMAND]`
 
@@ -50,4 +51,24 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.11/src/commands/help.ts)_
+
+## `prg new`
+
+Create a new application
+
+```
+USAGE
+  $ prg new [-n <value>]
+
+FLAGS
+  -n, --name=<value>  Application name
+
+DESCRIPTION
+  Create a new application
+
+EXAMPLES
+  $ prg new
+```
+
+_See code: [src/commands/new.ts](https://github.com/prigas-dev/prigas/blob/v0.0.3-beta.3/src/commands/new.ts)_
 <!-- commandsstop -->
