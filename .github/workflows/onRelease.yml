@@ -47,6 +47,7 @@ jobs:
         with:
           files: |
             zips/*.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
         uses: JS-DevTools/npm-publish@19c28f1ef146469e409470805ea4279d47c3d35c
