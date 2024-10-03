@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "MyGenerator",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "namespace": {
+      "type": "string",
+      "x-prompt": "Namespace:",
+      "pattern": "[a-z]\\w+"
+    },
+    "operationName": {
+      "type": "string",
+      "x-prompt": "Operation name:",
+      "pattern": "[a-z]\\w+"
+    },
+    "operationType": {
+      "type": "string",
+      "x-prompt": {
+        "message": "Operation type:",
+        "type": "list",
+        "items": [
+          {
+            "value": "query",
+            "label": "Query"
+          },
+          {
+            "value": "mutation",
+            "label": "Mutation"
+          }
+        ]
+      }
+    }
+  },
+  "required": ["namespace", "operationName"]
+}

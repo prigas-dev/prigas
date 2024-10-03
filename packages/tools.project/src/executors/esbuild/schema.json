@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Esbuild executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "dev": {
+      "type": "boolean",
+      "description": "Build for dev (true) or production (false).",
+      "default": false
+    }
+  },
+  "required": []
+}

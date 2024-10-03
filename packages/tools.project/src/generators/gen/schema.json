@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Gen",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Name for the generator:"
+    },
+    "description": {
+      "type": "string",
+      "description": "",
+      "x-prompt": "Description for the generator:"
+    }
+  },
+  "required": ["name"]
+}

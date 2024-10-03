@@ -1,24 +1,17 @@
 {
-  "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "module": "Node16",
-    "moduleResolution": "node16",
-    "outDir": "dist",
-    "rootDir": "src",
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "es2022"
-  },
-  "ts-node": {
-    "esm": true
-  },
+  "files": [],
   "references": [
     {
-      "path": "./tsconfig.test.json"
+      "path": "./packages/apps.backend.api/tsconfig.json"
     },
     {
-      "path": "./tsconfig.app.json"
+      "path": "./packages/apps.backend.server/tsconfig.json"
+    },
+    {
+      "path": "./packages/apps.frontend/tsconfig.json"
+    },
+    {
+      "path": "./packages/libs.result/tsconfig.json"
     }
   ]
 }

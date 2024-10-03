@@ -1,74 +1,50 @@
-prigas
-=================
+# React + TypeScript + Vite
 
-A CLI to guide with web applications development and deployment
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+Currently, two official plugins are available:
 
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/prigas.svg)](https://npmjs.org/package/prigas)
-[![Downloads/week](https://img.shields.io/npm/dw/prigas.svg)](https://npmjs.org/package/prigas)
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
+## Expanding the ESLint configuration
 
-<!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
-# Usage
-<!-- usage -->
-```sh-session
-$ npm install -g prigas
-$ prg COMMAND
-running command...
-$ prg (--version)
-prigas/0.0.3-beta.8 linux-x64 node-v20.17.0
-$ prg --help [COMMAND]
-USAGE
-  $ prg COMMAND
-...
-```
-<!-- usagestop -->
-# Commands
-<!-- commands -->
-* [`prg help [COMMAND]`](#prg-help-command)
-* [`prg new`](#prg-new)
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-## `prg help [COMMAND]`
+- Configure the top-level `parserOptions` property like this:
 
-Display help for prg.
-
-```
-USAGE
-  $ prg help [COMMAND...] [-n]
-
-ARGUMENTS
-  COMMAND...  Command to show help for.
-
-FLAGS
-  -n, --nested-commands  Include all nested commands in the output.
-
-DESCRIPTION
-  Display help for prg.
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.11/src/commands/help.ts)_
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-## `prg new`
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
 
-Create a new application
-
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
 ```
-USAGE
-  $ prg new [-n <value>]
-
-FLAGS
-  -n, --name=<value>  Application name
-
-DESCRIPTION
-  Create a new application
-
-EXAMPLES
-  $ prg new
-```
-
-_See code: [src/commands/new.ts](https://github.com/prigas-dev/prigas/blob/v0.0.3-beta.8/src/commands/new.ts)_
-<!-- commandsstop -->

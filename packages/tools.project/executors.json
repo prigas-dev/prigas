@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "esbuild": {
+      "implementation": "./src/executors/esbuild/executor",
+      "schema": "./src/executors/esbuild/schema.json",
+      "description": "Runs esbuild with a config provided by the root of the repository"
+    }
+  }
+}
