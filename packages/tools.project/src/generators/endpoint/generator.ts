@@ -9,10 +9,10 @@ export async function endpointGenerator(
   options: EndpointGeneratorOptions,
 ) {
   const projects = getProjects(tree)
-  const backendApi = projects.get("apps.backend.api")
-  const backendServer = projects.get("apps.backend.server")
-  assert(backendApi, "apps.backend.api project was not found")
-  assert(backendServer, "apps.backend.server project was not found")
+  const backendApi = projects.get("@prigas/server.api")
+  const backendServer = projects.get("@prigas/server")
+  assert(backendApi, "@prigas/server.api project was not found")
+  assert(backendServer, "@prigas/server project was not found")
 
   generateApi(tree, backendApi.root, options)
   generateServer(tree, backendServer.root, options)

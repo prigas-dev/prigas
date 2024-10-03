@@ -4,6 +4,11 @@
       "implementation": "./src/executors/esbuild/executor",
       "schema": "./src/executors/esbuild/schema.json",
       "description": "Runs esbuild with a config provided by the root of the repository"
+    },
+    "clean": {
+      "implementation": "./src/executors/clean/executor",
+      "schema": "./src/executors/clean/schema.json",
+      "description": "Clean a directory"
     }
   }
 }

@@ -1,17 +1,34 @@
 {
-  "name": "@prigas.server",
+  "name": "@prigas/server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/@prigas.server/src",
   "projectType": "library",
   "tags": [],
   "targets": {
     "build": {
-      "command": "node packages/@prigas.server/build.mjs",
+      "executor": "tools.project:esbuild",
+      "defaultConfiguration": "production",
       "dependsOn": [
+        "clean",
         {
           "target": "build",
-          "projects": ["apps.backend.server", "apps.frontend"]
+          "projects": ["@prigas/server.frontend"]
         }
-      ]
+      ],
+      "configurations": {
+        "production": {
+          "dev": false
+        },
+        "development": {
+          "dev": true
+        }
+      }
+    },
+    "clean": {
+      "executor": "tools.project:clean",
+      "options": {
+        "dir": "dist/@prigas/server"
+      }
     }
   }
 }

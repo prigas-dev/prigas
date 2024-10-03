@@ -24,7 +24,7 @@ function generateEndpointFile(
   ${operationNamePascalCase}InputSchema,
   ${operationNamePascalCase}OutputSchema,
   api,
-} from "apps.backend.api"
+} from "@prigas/server.api"
 import { Ok } from "libs.result"
 import { z } from "zod"
 import { logger } from "../../lib/logger.js"
@@ -123,7 +123,7 @@ function generateTestFile(
   options: EndpointGeneratorOptions,
 ) {
   const { className: operationNamePascalCase } = names(options.operationName)
-  const content = `import { ${operationNamePascalCase}Input } from "apps.backend.api"
+  const content = `import { ${operationNamePascalCase}Input } from "@prigas/server.api"
 import { ${options.operationName}Handler, ${options.operationName}HandlerInput } from "./${options.operationName}.js"
 
 describe("${options.operationName}", function() {

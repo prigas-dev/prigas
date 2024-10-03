@@ -1,10 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "targetDefaults": {
-    "build": {
-      "cache": true
-    }
-  },
+  "targetDefaults": {},
   "defaultBase": "main",
-  "defaultProject": "apps.cli"
+  "defaultProject": "prigas"
 }
