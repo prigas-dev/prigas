@@ -1,0 +1,19 @@
+{
+  "generators": {
+    "endpoint": {
+      "factory": "./src/generators/endpoint/generator",
+      "schema": "./src/generators/endpoint/schema.json",
+      "description": "Generates an endpoint api and server implementation"
+    },
+    "gen": {
+      "factory": "./src/generators/gen/generator",
+      "schema": "./src/generators/gen/schema.json",
+      "description": "Generate a generator on tools.project."
+    },
+    "exe": {
+      "factory": "./src/generators/exe/generator",
+      "schema": "./src/generators/exe/schema.json",
+      "description": "Generate an executor on tools.project."
+    }
+  }
+}

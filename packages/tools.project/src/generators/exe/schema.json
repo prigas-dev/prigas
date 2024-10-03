@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Exe",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Name for the executor:"
+    },
+    "description": {
+      "type": "string",
+      "description": "",
+      "x-prompt": "Description for the executor:"
+    }
+  },
+  "required": ["name"]
+}

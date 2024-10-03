@@ -1,0 +1,17 @@
+{
+  "name": "@prigas.server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "command": "node packages/@prigas.server/build.mjs",
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": ["apps.backend.server", "apps.frontend"]
+        }
+      ]
+    }
+  }
+}

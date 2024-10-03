@@ -1,0 +1,21 @@
+{
+  "name": "apps.backend.server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/packages/apps.server/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "tools.project:esbuild",
+      "defaultConfiguration": "production",
+      "configurations": {
+        "production": {
+          "dev": false
+        },
+        "development": {
+          "dev": true
+        }
+      }
+    }
+  }
+}
