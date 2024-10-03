@@ -57,16 +57,7 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1
 
-  packages/apps.backend.api:
-    dependencies:
-      '@ts-rest/core':
-        specifier: ^3.51.0
-        version: 3.51.0(@types/node@22.7.4)(zod@3.23.8)
-      zod:
-        specifier: ^3.23.8
-        version: 3.23.8
-
-  packages/apps.backend.server:
+  packages/@prigas.server:
     dependencies:
       '@fastify/cors':
         specifier: ^9.0.1
@@ -115,41 +106,16 @@ importers:
         specifier: ^2.1.1
         version: 2.1.2(@types/node@22.7.4)
 
-  packages/apps.cli:
+  packages/@prigas.server.api:
     dependencies:
-      '@inquirer/prompts':
-        specifier: ^5.5.0
-        version: 5.5.0
-      '@oclif/core':
-        specifier: ^4
-        version: 4.0.26
-      '@oclif/plugin-help':
-        specifier: ^6
-        version: 6.2.13
-      jszip:
-        specifier: ^3.10.1
-        version: 3.10.1
-    devDependencies:
-      '@oclif/test':
-        specifier: ^4
-        version: 4.0.9(@oclif/core@4.0.26)
-      oclif:
-        specifier: ^4
-        version: 4.15.1
-      shx:
-        specifier: ^0.3.3
-        version: 0.3.4
-      tsx:
-        specifier: ^4.19.1
-        version: 4.19.1
-      vitest:
-        specifier: ^2.1.1
-        version: 2.1.2(@types/node@22.7.4)
-      vitest-mock-extended:
-        specifier: ^2.0.2
-        version: 2.0.2(typescript@5.6.2)(vitest@2.1.2(@types/node@22.7.4))
+      '@ts-rest/core':
+        specifier: ^3.51.0
+        version: 3.51.0(@types/node@22.7.4)(zod@3.23.8)
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
 
-  packages/apps.frontend:
+  packages/@prigas.server.frontend:
     dependencies:
       '@hookform/resolvers':
         specifier: ^3.9.0
@@ -258,10 +224,44 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
 
+  packages/prigas:
+    dependencies:
+      '@inquirer/prompts':
+        specifier: ^5.5.0
+        version: 5.5.0
+      '@oclif/core':
+        specifier: ^4
+        version: 4.0.26
+      '@oclif/plugin-help':
+        specifier: ^6
+        version: 6.2.13
+      jszip:
+        specifier: ^3.10.1
+        version: 3.10.1
+    devDependencies:
+      '@oclif/test':
+        specifier: ^4
+        version: 4.0.9(@oclif/core@4.0.26)
+      oclif:
+        specifier: ^4
+        version: 4.15.1
+      shx:
+        specifier: ^0.3.3
+        version: 0.3.4
+      tsx:
+        specifier: ^4.19.1
+        version: 4.19.1
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.2(@types/node@22.7.4)
+      vitest-mock-extended:
+        specifier: ^2.0.2
+        version: 2.0.2(typescript@5.6.2)(vitest@2.1.2(@types/node@22.7.4))
+
   packages/tools.project:
     dependencies:
       '@nx/devkit':
-        specifier: ^19.8.3
+        specifier: 19.8.3
         version: 19.8.3(nx@19.8.3(@swc-node/register@1.10.9(@swc/core@1.7.26)(@swc/types@0.1.12)(typescript@5.6.2))(@swc/core@1.7.26))
       esbuild:
         specifier: ^0.24.0
@@ -270,6 +270,9 @@ importers:
         specifier: ^23.0.0
         version: 23.0.0
     devDependencies:
+      '@schemastore/package':
+        specifier: ^0.0.10
+        version: 0.0.10
       '@types/node':
         specifier: ^22.7.2
         version: 22.7.4
@@ -2361,6 +2364,9 @@ packages:
     resolution: {integrity: sha512-+lvL/4mQxSV8MukpkKyyvfwhH266COcWlXE/1qxwN08ajovta3459zrjLghYMgDerlzNwLAcFpvU+WWE5y6nAQ==}
     cpu: [x64]
     os: [win32]
+
+  '@schemastore/package@0.0.10':
+    resolution: {integrity: sha512-D3LxMCnkgsb4LO5sDKf6E+yahM2SqpEHmkqMPDSJis5Cy/j2MgWo/g/iq0lECK0mrPWfx3hqKm2ZJlqxwbRJQA==}
 
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
@@ -9056,6 +9062,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.22.5':
     optional: true
+
+  '@schemastore/package@0.0.10': {}
 
   '@sinclair/typebox@0.27.8': {}
 

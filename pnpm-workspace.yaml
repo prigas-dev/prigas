@@ -1,7 +1,7 @@
 packages:
-  - packages/apps.backend.api
-  - packages/apps.backend.server
-  - packages/apps.cli
-  - packages/apps.frontend
+  - packages/prigas
+  - packages/@prigas.server
+  - packages/@prigas.server.api
+  - packages/@prigas.server.frontend
   - packages/libs.result
   - packages/tools.project
