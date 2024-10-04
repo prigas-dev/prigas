@@ -5,6 +5,15 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "dist/@prigas/server",
+        "commands": ["npm publish --access public"],
+        "parallel": false
+      }
+    },
     "build": {
       "executor": "tools.project:esbuild",
       "defaultConfiguration": "production",

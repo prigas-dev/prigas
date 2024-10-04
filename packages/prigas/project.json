@@ -1,0 +1,59 @@
+{
+  "name": "prigas",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/prigas/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "dist/prigas",
+        "commands": ["npm publish"],
+        "parallel": false
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "production",
+      "dependsOn": ["build-js"],
+      "options": {
+        "cwd": "dist/prigas",
+        "parallel": false,
+        "commands": [
+          "pnpm install --prod --ignore-workspace",
+          "oclif manifest",
+          "oclif readme",
+          "cpy README.md ../../packages/prigas"
+        ]
+      },
+      "configurations": {
+        "production": {},
+        "development": {}
+      }
+    },
+    "build-js": {
+      "executor": "tools.project:esbuild",
+      "defaultConfiguration": "production",
+      "dependsOn": ["clean"],
+      "options": {
+        "assets": [".npmignore", "bin", "README.md"]
+      },
+      "configurations": {
+        "production": {
+          "dev": false
+        },
+        "development": {
+          "dev": true
+        }
+      }
+    },
+    "clean": {
+      "executor": "tools.project:clean",
+      "options": {
+        "dir": "dist/prigas"
+      }
+    }
+  }
+}

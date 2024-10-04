@@ -71,12 +71,19 @@ await fastify.register(async (f) => {
   )
 })
 
+// this is the relative path where the frontend build will be output
+// see packages/@prigas.server.frontend/vite.config.ts
+const frontendDistFolder = path.join(import.meta.dirname, "..", "frontend")
+
 await fastify.register(fastifyStatic, {
-  // this is the relative path where the frontend build will be output
-  // see packages/@prigas.server.frontend/vite.config.ts
-  root: path.join(import.meta.dirname, "..", "frontend"),
+  root: frontendDistFolder,
   prefix: "/",
-  constraints: {}, // optional: default {}
+  constraints: {},
+  wildcard: false,
+})
+
+fastify.get("*", (_, reply) => {
+  reply.sendFile("index.html", frontendDistFolder)
 })
 
 export async function startPrigasServer() {
