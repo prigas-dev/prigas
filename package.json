@@ -14,6 +14,7 @@
     "@swc-node/register": "^1.10.9",
     "@swc/core": "^1.7.26",
     "@types/node": "^22.7.2",
+    "cpy-cli": "^5.0.0",
     "eslint": "^9.9.0",
     "eslint-plugin-react": "^7.36.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",

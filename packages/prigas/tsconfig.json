@@ -2,7 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@prigas/server": ["../@prigas.server/src/index.ts"]
+      "@prigas/server": ["../@prigas.server/src/index.ts"],
+      "@prigas/server.api": ["../@prigas.server.api/src/index.ts"],
+      "libs.result": ["../libs.result/src/index.ts"]
     }
   },
   "files": [],

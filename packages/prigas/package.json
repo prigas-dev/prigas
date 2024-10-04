@@ -1,7 +1,7 @@
 {
   "name": "prigas",
   "description": "A CLI to guide with web applications development and deployment",
-  "version": "0.0.3-beta.8",
+  "version": "0.0.3",
   "author": "Victor Machado",
   "bin": {
     "prg": "./bin/run.js"
@@ -9,11 +9,6 @@
   "bugs": "https://github.com/prigas-dev/prigas/issues",
   "scripts": {
     "dev": "tsx ./bin/dev.js",
-    "build": "tsc --project tsconfig.app.json",
-    "lint": "eslint . --ext .ts",
-    "postpack": "shx rm -f oclif.manifest.json",
-    "posttest": "pnpm run lint",
-    "prepack": "pnpm run build && oclif manifest && oclif readme",
     "test": "vitest",
     "version": "oclif readme && git add README.md"
   },
@@ -21,6 +16,7 @@
     "@inquirer/prompts": "^5.5.0",
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
+    "@prigas/server": "workspace:*",
     "jszip": "^3.10.1"
   },
   "devDependencies": {
@@ -36,16 +32,26 @@
   },
   "files": [
     "/bin",
-    "/dist",
+    "/src",
     "/oclif.manifest.json"
   ],
+  "oclif": {
+    "bin": "prg",
+    "dirname": "prg",
+    "commands": "./src/commands",
+    "plugins": [
+      "@oclif/plugin-help"
+    ],
+    "topicSeparator": " "
+  },
   "homepage": "https://prigas.dev",
   "keywords": [
     "oclif"
   ],
   "license": "AGPL-3.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "type": "module",
-  "repository": "https://github.com/prigas-dev/prigas"
+  "repository": "https://github.com/prigas-dev/prigas",
+  "private": false
 }

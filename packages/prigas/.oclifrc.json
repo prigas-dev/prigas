@@ -1,7 +1,0 @@
-{
-  "bin": "prg",
-  "dirname": "prg",
-  "commands": "./dist/commands",
-  "plugins": ["@oclif/plugin-help"],
-  "topicSeparator": " "
-}

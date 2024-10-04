@@ -20,7 +20,7 @@ $ npm install -g prigas
 $ prg COMMAND
 running command...
 $ prg (--version)
-prigas/0.0.3-beta.7 linux-x64 node-v20.17.0
+prigas/0.0.3 win32-x64 node-v20.12.2
 $ prg --help [COMMAND]
 USAGE
   $ prg COMMAND
@@ -29,46 +29,22 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`prg help [COMMAND]`](#prg-help-command)
-* [`prg new`](#prg-new)
+* [`prg start`](#prg-start)
 
-## `prg help [COMMAND]`
+## `prg start`
 
-Display help for prg.
-
-```
-USAGE
-  $ prg help [COMMAND...] [-n]
-
-ARGUMENTS
-  COMMAND...  Command to show help for.
-
-FLAGS
-  -n, --nested-commands  Include all nested commands in the output.
-
-DESCRIPTION
-  Display help for prg.
-```
-
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.11/src/commands/help.ts)_
-
-## `prg new`
-
-Create a new application
+Start prigas service.
 
 ```
 USAGE
-  $ prg new [-n <value>]
-
-FLAGS
-  -n, --name=<value>  Application name
+  $ prg start
 
 DESCRIPTION
-  Create a new application
+  Start prigas service.
 
 EXAMPLES
-  $ prg new
+  $ prg start
 ```
 
-_See code: [src/commands/new.ts](https://github.com/prigas-dev/prigas/blob/v0.0.3-beta.7/src/commands/new.ts)_
+_See code: [src/commands/start.js](https://github.com/prigas-dev/prigas/blob/v0.0.3/src/commands/start.js)_
 <!-- commandsstop -->
