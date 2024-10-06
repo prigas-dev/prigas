@@ -9,7 +9,7 @@ export interface ParseContext {
 }
 
 export interface BaseNode {
-  kind: number
+  kind: string
   text: string
   length: number
   index: number
@@ -18,19 +18,18 @@ export interface BaseNode {
 }
 
 export const NodeKind = {
-  EOF: 0 as const,
-  Character: 1 as const,
-  String: 2 as const,
-  LineBreak: 3 as const,
-  Indentation: 4 as const,
-  Constant: 5 as const,
-  RepeatBlock: 6 as const,
-  RepeatBlockOpen: 7 as const,
-  RepeatBlockClose: 8 as const,
-  Interpolation: 9 as const,
-  InterpolationOpen: 10 as const,
-  InterpolationClose: 11 as const,
-  InterpolationExpression: 12 as const,
+  EOF: "EOF" as const,
+  Character: "Character" as const,
+  Whitespace: "Whitespace" as const,
+  String: "String" as const,
+  Constant: "Constant" as const,
+  RepeatBlock: "RepeatBlock" as const,
+  RepeatBlockOpen: "RepeatBlockOpen" as const,
+  RepeatBlockClose: "RepeatBlockClose" as const,
+  Interpolation: "Interpolation" as const,
+  InterpolationOpen: "InterpolationOpen" as const,
+  InterpolationClose: "InterpolationClose" as const,
+  InterpolationExpression: "InterpolationExpression" as const,
 }
 type K = typeof NodeKind
 
@@ -44,11 +43,8 @@ export interface CharacterNode extends BaseNode {
 export interface StringNode extends BaseNode {
   kind: K["String"]
 }
-export interface LineBreakNode extends BaseNode {
-  kind: K["LineBreak"]
-}
-export interface IndentationNode extends BaseNode {
-  kind: K["Indentation"]
+export interface WhitespaceNode extends BaseNode {
+  kind: K["Whitespace"]
 }
 export interface ConstantNode extends BaseNode {
   kind: K["Constant"]
@@ -56,16 +52,18 @@ export interface ConstantNode extends BaseNode {
 export interface RepeatBlockCloseNode extends BaseNode {
   kind: K["RepeatBlockClose"]
   commentMarker: StringNode
+  closeMarker: StringNode
 }
 export interface RepeatBlockOpenNode extends BaseNode {
   kind: K["RepeatBlockOpen"]
   commentMarker: StringNode
+  openMarker: StringNode
 }
 export interface RepeatBlockNode extends BaseNode {
   kind: K["RepeatBlock"]
   open: RepeatBlockOpenNode
   close: RepeatBlockCloseNode
-  nodes: Node[]
+  nodes: TemplateNode[]
 }
 export interface InterpolationCloseNode extends BaseNode {
   kind: K["InterpolationClose"]
@@ -87,9 +85,8 @@ export type Node =
   | EOFNode
   | CharacterNode
   | StringNode
-  | LineBreakNode
+  | WhitespaceNode
   | ConstantNode
-  | IndentationNode
   | RepeatBlockOpenNode
   | RepeatBlockCloseNode
   | RepeatBlockNode
@@ -104,8 +101,26 @@ export type NodeOfKind<TNodeKind extends NodeKind> = Extract<
   { kind: TNodeKind }
 >
 
-export function parseTemplate(template: string) {
-  const nodes: Node[] = []
+export interface Template {
+  nodes: TemplateNode[]
+}
+const templateNodeKinds = [
+  NodeKind.Constant,
+  NodeKind.RepeatBlock,
+  NodeKind.Interpolation,
+] as const
+type TemplateNodeKind = (typeof templateNodeKinds)[number]
+export type TemplateNode = NodeOfKind<TemplateNodeKind>
+
+function assertTemplateNode(node: Node): asserts node is TemplateNode {
+  assert(
+    templateNodeKinds.includes(node.kind as TemplateNodeKind),
+    `did not expect node of kind ${node.kind}`,
+  )
+}
+
+export function parseTemplate(template: string): Template {
+  const nodes: TemplateNode[] = []
   const ctx: ParseContext = {
     template,
     index: 0,
@@ -116,15 +131,19 @@ export function parseTemplate(template: string) {
 
   let node = peekNode(ctx)
   while (node != null && node.kind !== NodeKind.EOF) {
+    assertTemplateNode(node)
     nodes.push(node)
     updateContext(ctx, node)
     node = peekNode(ctx)
   }
 
-  return nodes
+  const parsedTemplate: Template = {
+    nodes: nodes,
+  }
+  return parsedTemplate
 }
 
-export function peekNode(ctx: ParseContext): Node | null {
+export function peekNode(ctx: ParseContext) {
   return (
     peekSyntaxMarker(ctx) ??
     // The last thing to check is a constant
@@ -132,13 +151,11 @@ export function peekNode(ctx: ParseContext): Node | null {
   )
 }
 
-export function peekSyntaxMarker(ctx: ParseContext): Node | null {
+export function peekSyntaxMarker(ctx: ParseContext) {
   return (
     peekEOF(ctx) ??
     peekRepeatBlock(ctx) ??
     peekRepeatBlockClose(ctx) ??
-    peekLineBreak(ctx) ??
-    peekIndentation(ctx) ??
     peekInterpolation(ctx)
   )
 }
@@ -150,32 +167,16 @@ export function peekEOF(ctx: ParseContext): EOFNode | null {
   return null
 }
 
-export function peekLineBreak(ctx: ParseContext): LineBreakNode | null {
-  const lineBreakString =
-    peekString(ctx, "\n") ?? peekString(ctx, "\r\n") ?? peekString(ctx, "\r")
-  if (lineBreakString == null) {
-    return null
-  }
-  const lineBreak = makeNode(ctx, NodeKind.LineBreak, {
-    text: lineBreakString.text,
-  })
-  return lineBreak
-}
-
-export function peekIndentation(ctx: ParseContext): IndentationNode | null {
-  // Indentations are recognized only at the begin of the line
-  if (ctx.column > 1) {
-    return null
-  }
-  const spacesString = peekMany(ctx, " ", "\t")
+export function peekWhitespace(ctx: ParseContext): WhitespaceNode | null {
+  const spacesString = peekMany(ctx, " ", "\t", "\n", "\r")
   if (spacesString == null) {
     return null
   }
 
-  const indentation = makeNode(ctx, NodeKind.Indentation, {
+  const whitespace = makeNode(ctx, NodeKind.Whitespace, {
     text: spacesString.text,
   })
-  return indentation
+  return whitespace
 }
 
 export function peekConstant(ctx: ParseContext): ConstantNode | null {
@@ -205,7 +206,7 @@ export function peekRepeatBlock(ctx: ParseContext): RepeatBlockNode | null {
 
   currentCtx = moved(currentCtx, open)
   currentCtx.insideRepeatBlock = true
-  const nodes: Node[] = []
+  const nodes: TemplateNode[] = []
   let nextNode = peekNode(currentCtx)
   while (nextNode != null && nextNode.kind !== NodeKind.EOF) {
     if (nextNode.kind === NodeKind.RepeatBlockClose) {
@@ -240,24 +241,14 @@ export function peekRepeatBlockOpen(
 ): RepeatBlockOpenNode | null {
   let currentCtx = ctx
 
-  // repeat block opens can only happen on new lines
-  // or start of file
-  let prefix = ""
-  const lineBreakBefore = peekLineBreak(currentCtx)
-  if (lineBreakBefore == null && currentCtx.index > 0) {
+  // whitespace before is peeked because we ignore them to
+  // generate content
+  const whitespaceBefore = peekWhitespace(currentCtx)
+  if (whitespaceBefore == null && currentCtx.index > 0) {
     return null
   }
-  if (lineBreakBefore != null) {
-    prefix += lineBreakBefore.text
-
-    currentCtx = moved(currentCtx, lineBreakBefore)
-  }
-
-  const indentationBefore = peekIndentation(currentCtx)
-  if (indentationBefore != null) {
-    prefix += indentationBefore.text
-
-    currentCtx = moved(currentCtx, indentationBefore)
+  if (whitespaceBefore != null) {
+    currentCtx = moved(currentCtx, whitespaceBefore)
   }
 
   const commentMarker = peekCommentMarker(currentCtx)
@@ -266,24 +257,18 @@ export function peekRepeatBlockOpen(
   }
 
   currentCtx = moved(currentCtx, commentMarker)
-  const openMarker = peekChar(currentCtx, "<")
+  const openMarker = peekString(currentCtx, "<")
   if (openMarker == null) {
     return null
   }
 
-  const openText = prefix + commentMarker.text + openMarker.text
-
-  currentCtx = moved(currentCtx, openMarker)
-  const lineBreakAfter = peekLineBreak(currentCtx)
-  if (lineBreakAfter == null) {
-    throw new Error(
-      `Open repeat block ${commentMarker.text + openMarker.text} on line ${commentMarker.line} column ${commentMarker.column} must be followed by a line break.`,
-    )
-  }
+  const text =
+    (whitespaceBefore?.text ?? "") + commentMarker.text + openMarker.text
 
   const open = makeNode(ctx, NodeKind.RepeatBlockOpen, {
-    text: openText,
+    text: text,
     commentMarker: commentMarker,
+    openMarker: openMarker,
   })
   return open
 }
@@ -296,20 +281,14 @@ export function peekRepeatBlockClose(
   }
   let currentCtx = ctx
 
-  // repeat block opens can only happen on new lines
-  let prefix = ""
-  const lineBreakBefore = peekLineBreak(currentCtx)
-  if (lineBreakBefore == null) {
+  // whitespace before is picked because we ignore them to
+  // generate content
+  const whitespaceBefore = peekWhitespace(currentCtx)
+  if (whitespaceBefore == null && currentCtx.index > 0) {
     return null
   }
-  prefix += lineBreakBefore.text
-
-  currentCtx = moved(currentCtx, lineBreakBefore)
-  const indentationBefore = peekIndentation(currentCtx)
-  if (indentationBefore != null) {
-    prefix += indentationBefore.text
-
-    currentCtx = moved(currentCtx, indentationBefore)
+  if (whitespaceBefore != null) {
+    currentCtx = moved(currentCtx, whitespaceBefore)
   }
 
   const commentMarker = peekCommentMarker(currentCtx)
@@ -318,24 +297,18 @@ export function peekRepeatBlockClose(
   }
 
   currentCtx = moved(currentCtx, commentMarker)
-  const closeMarker = peekChar(currentCtx, ">")
+  const closeMarker = peekString(currentCtx, ">")
   if (closeMarker == null) {
     return null
   }
 
-  const closeText = prefix + commentMarker.text + closeMarker.text
-
-  currentCtx = moved(currentCtx, closeMarker)
-  const lineBreakOrEOFAfter = peekLineBreak(currentCtx) ?? peekEOF(currentCtx)
-  if (lineBreakOrEOFAfter == null) {
-    throw new Error(
-      `Close repeat block ${commentMarker.text + closeMarker.text} on line ${commentMarker.line} column ${commentMarker.column} must be followed by a line break or EOF.`,
-    )
-  }
+  const text =
+    (whitespaceBefore?.text ?? "") + commentMarker.text + closeMarker.text
 
   const close = makeNode(ctx, NodeKind.RepeatBlockClose, {
-    text: closeText,
+    text: text,
     commentMarker: commentMarker,
+    closeMarker: closeMarker,
   })
   return close
 }
@@ -381,14 +354,6 @@ export function peekInterpolation(ctx: ParseContext): InterpolationNode | null {
     expression,
     text,
   })
-
-  currentCtx = moved(currentCtx, close)
-  const nextOpen = peekInterpolationOpen(currentCtx)
-  if (nextOpen != null) {
-    throw new Error(
-      `Interpolation ${interpolation.text} on line ${ctx.line} column ${ctx.column} cannot be followed immediately by another interpolation`,
-    )
-  }
 
   return interpolation
 }

@@ -2,12 +2,10 @@ import {
   CharacterNode,
   ConstantNode,
   EOFNode,
-  IndentationNode,
   InterpolationCloseNode,
   InterpolationExpressionNode,
   InterpolationNode,
   InterpolationOpenNode,
-  LineBreakNode,
   makeNode,
   moved,
   Node,
@@ -19,22 +17,22 @@ import {
   peekCommentMarker,
   peekConstant,
   peekEOF,
-  peekIndentation,
   peekInterpolation,
   peekInterpolationClose,
   peekInterpolationOpen,
-  peekLineBreak,
   peekMany,
   peekRepeatBlock,
   peekRepeatBlockClose,
   peekRepeatBlockOpen,
   peekString,
   peekUntil,
+  peekWhitespace,
   RepeatBlockCloseNode,
   RepeatBlockNode,
   RepeatBlockOpenNode,
   StringNode,
   updateContext,
+  WhitespaceNode,
 } from "./template-parser.js"
 
 describe("moved", function () {
@@ -325,31 +323,25 @@ describe("peekUntil", function () {
   })
 })
 
-describe("peekIndentation", function () {
+describe("peekWhitespace", function () {
   it("should return null on EOF", function () {
     const ctx = buildContext({ template: "" })
-    const node = peekIndentation(ctx)
-
-    expect(node).toBeNull()
-  })
-  it("should return null if not at the first column", function () {
-    const ctx = buildContext({ template: "  abc", column: 2, index: 1 })
-    const node = peekIndentation(ctx)
+    const node = peekWhitespace(ctx)
 
     expect(node).toBeNull()
   })
   it("should return null if no space is found at the first column", function () {
     const ctx = buildContext({ template: "abc" })
-    const node = peekIndentation(ctx)
+    const node = peekWhitespace(ctx)
 
     expect(node).toBeNull()
   })
-  it("should return next IndentationNode with single space", function () {
+  it("should return next WhitespaceNode with single space", function () {
     const ctx = buildContext({ template: "\tabc" })
-    const node = peekIndentation(ctx)
+    const node = peekWhitespace(ctx)
 
-    expect(node).toEqual<IndentationNode>({
-      kind: NodeKind.Indentation,
+    expect(node).toEqual<WhitespaceNode>({
+      kind: NodeKind.Whitespace,
       text: "\t",
       index: 0,
       column: 1,
@@ -357,71 +349,17 @@ describe("peekIndentation", function () {
       length: 1,
     })
   })
-  it("should return next IndentationNode with all spaces up until a non space character", function () {
-    const ctx = buildContext({ template: "  \t\tabc" })
-    const node = peekIndentation(ctx)
+  it("should return next WhitespaceNode with all spaces up until a non space character", function () {
+    const ctx = buildContext({ template: "  \r\n\tabc" })
+    const node = peekWhitespace(ctx)
 
-    expect(node).toEqual<IndentationNode>({
-      kind: NodeKind.Indentation,
-      text: "  \t\t",
+    expect(node).toEqual<WhitespaceNode>({
+      kind: NodeKind.Whitespace,
+      text: "  \r\n\t",
       index: 0,
       column: 1,
       line: 1,
-      length: 4,
-    })
-  })
-})
-
-describe("peekLineBreak", function () {
-  it("should return null on EOF", function () {
-    const ctx = buildContext({ template: "" })
-    const node = peekLineBreak(ctx)
-
-    expect(node).toBeNull()
-  })
-  it("should return null if next string is not a line break", function () {
-    const ctx = buildContext({ template: "abc" })
-    const node = peekLineBreak(ctx)
-
-    expect(node).toBeNull()
-  })
-  it("should return LineBreakNode if next string is \\n", function () {
-    const ctx = buildContext({ template: "\nabc" })
-    const node = peekLineBreak(ctx)
-
-    expect(node).toEqual<LineBreakNode>({
-      kind: NodeKind.LineBreak,
-      text: "\n",
-      index: 0,
-      line: 1,
-      column: 1,
-      length: 1,
-    })
-  })
-  it("should return LineBreakNode if next string is \\r\\n", function () {
-    const ctx = buildContext({ template: "\r\nabc" })
-    const node = peekLineBreak(ctx)
-
-    expect(node).toEqual<LineBreakNode>({
-      kind: NodeKind.LineBreak,
-      text: "\r\n",
-      index: 0,
-      line: 1,
-      column: 1,
-      length: 2,
-    })
-  })
-  it("should return LineBreakNode if next string is \\r", function () {
-    const ctx = buildContext({ template: "\rabc" })
-    const node = peekLineBreak(ctx)
-
-    expect(node).toEqual<LineBreakNode>({
-      kind: NodeKind.LineBreak,
-      text: "\r",
-      index: 0,
-      line: 1,
-      column: 1,
-      length: 1,
+      length: 5,
     })
   })
 })
@@ -598,95 +536,64 @@ describe("peekRepeatBlockOpen", function () {
 
     expect(node).toBeNull()
   })
-  it("should return null if next string is not a line break and is not the begin of file", function () {
-    const ctx = buildContext({ template: "a//<", index: 1, line: 1, column: 2 })
-    const node = peekRepeatBlockOpen(ctx)
-
-    expect(node).toBeNull()
-  })
-  it("should return RepeatBlockOpenNode if next string is a valid marker and is the begin of file", function () {
-    const ctx = buildContext({ template: "//<\n" })
-    const node = peekRepeatBlockOpen(ctx)
-
-    expect(node).toEqual<RepeatBlockOpenNode>({
-      kind: NodeKind.RepeatBlockOpen,
-      text: "//<",
-      index: 0,
-      line: 1,
-      column: 1,
-      length: 3,
-      commentMarker: {
-        kind: NodeKind.String,
-        text: "//",
-        index: 0,
-        line: 1,
-        column: 1,
-        length: 2,
-      },
-    })
-  })
   describe("without indentation", function () {
-    it("should return null if after line break there is no comment marker", function () {
-      const ctx = buildContext({ template: "\na//<\n" })
+    it("should return null if next string is not a comment marker", function () {
+      const ctx = buildContext({ template: "a//<" })
       const node = peekRepeatBlockOpen(ctx)
 
       expect(node).toBeNull()
     })
     it("should return null if after comment marker there is no <", function () {
-      const ctx = buildContext({ template: "\n//_\n" })
+      const ctx = buildContext({ template: "//_" })
       const node = peekRepeatBlockOpen(ctx)
 
       expect(node).toBeNull()
     })
-    it("should throw an Error if after the whole marker ther is no line break", function () {
-      const ctx = buildContext({ template: "\n//<a" })
-      expect(() => peekRepeatBlockOpen(ctx)).toThrowErrorMatchingInlineSnapshot(
-        `[Error: Open repeat block //< on line 2 column 1 must be followed by a line break.]`,
-      )
-    })
-    it("should return RepeatBlockOpenNode if next string is a valid marker delimited by 2 line breaks", function () {
-      const ctx = buildContext({ template: "\n//<\n" })
+    it("should return RepeatBlockOpenNode if next string is a valid marker", function () {
+      const ctx = buildContext({ template: "//<" })
       const node = peekRepeatBlockOpen(ctx)
 
       expect(node).toEqual<RepeatBlockOpenNode>({
         kind: NodeKind.RepeatBlockOpen,
-        text: "\n//<",
+        text: "//<",
         index: 0,
         line: 1,
         column: 1,
-        length: 4,
+        length: 3,
         commentMarker: {
           kind: NodeKind.String,
           text: "//",
-          index: 1,
-          line: 2,
+          index: 0,
+          line: 1,
           column: 1,
           length: 2,
+        },
+        openMarker: {
+          kind: NodeKind.String,
+          text: "<",
+          index: 2,
+          line: 1,
+          column: 3,
+          length: 1,
         },
       })
     })
   })
   describe("with indentation", function () {
-    it("should return null if after line break there is no comment marker", function () {
-      const ctx = buildContext({ template: "\n  a//<\n" })
+    it("should return null if after indentation there is no comment marker", function () {
+      const ctx = buildContext({ template: "\n  a//<" })
       const node = peekRepeatBlockOpen(ctx)
 
       expect(node).toBeNull()
     })
     it("should return null if after comment marker there is no <", function () {
-      const ctx = buildContext({ template: "\n  //_\n" })
+      const ctx = buildContext({ template: "\n  //_" })
       const node = peekRepeatBlockOpen(ctx)
 
       expect(node).toBeNull()
     })
-    it("should throw an Error if after the whole marker ther is no line break", function () {
-      const ctx = buildContext({ template: "\n  //<a" })
-      expect(() => peekRepeatBlockOpen(ctx)).toThrowErrorMatchingInlineSnapshot(
-        `[Error: Open repeat block //< on line 2 column 3 must be followed by a line break.]`,
-      )
-    })
-    it("should return RepeatBlockOpenNode if next string is a valid marker delimited by 2 line breaks", function () {
-      const ctx = buildContext({ template: "\n  //<\n" })
+    it("should return RepeatBlockOpenNode if next string is a whitespace followed by a valid marker", function () {
+      const ctx = buildContext({ template: "\n  //<" })
       const node = peekRepeatBlockOpen(ctx)
 
       expect(node).toEqual<RepeatBlockOpenNode>({
@@ -704,6 +611,14 @@ describe("peekRepeatBlockOpen", function () {
           column: 3,
           length: 2,
         },
+        openMarker: {
+          kind: NodeKind.String,
+          text: "<",
+          index: 5,
+          line: 2,
+          column: 5,
+          length: 1,
+        },
       })
     })
   })
@@ -717,27 +632,15 @@ describe("peekRepeatBlockClose", function () {
     expect(node).toBeNull()
   })
   it("should return null if not inside RepeatBlock context", function () {
-    const ctx = buildContext({ template: "\n//>\n", insideRepeatBlock: false })
-    const node = peekRepeatBlockClose(ctx)
-
-    expect(node).toBeNull()
-  })
-  it("should return null if next string is not a line break", function () {
-    const ctx = buildContext({
-      template: "a//>",
-      index: 1,
-      line: 1,
-      column: 2,
-      insideRepeatBlock: true,
-    })
+    const ctx = buildContext({ template: "//>", insideRepeatBlock: false })
     const node = peekRepeatBlockClose(ctx)
 
     expect(node).toBeNull()
   })
   describe("without indentation", function () {
-    it("should return null if after line break there is no comment marker", function () {
+    it("should return null if next string is not a comment marker", function () {
       const ctx = buildContext({
-        template: "\na//>\n",
+        template: "a//>",
         insideRepeatBlock: true,
       })
       const node = peekRepeatBlockClose(ctx)
@@ -745,66 +648,45 @@ describe("peekRepeatBlockClose", function () {
       expect(node).toBeNull()
     })
     it("should return null if after comment marker there is no >", function () {
-      const ctx = buildContext({ template: "\n//_\n", insideRepeatBlock: true })
+      const ctx = buildContext({ template: "//_", insideRepeatBlock: true })
       const node = peekRepeatBlockClose(ctx)
 
       expect(node).toBeNull()
     })
-    it("should throw an Error if after the whole marker ther is no line break", function () {
-      const ctx = buildContext({ template: "\n//>a", insideRepeatBlock: true })
-      expect(() =>
-        peekRepeatBlockClose(ctx),
-      ).toThrowErrorMatchingInlineSnapshot(
-        `[Error: Close repeat block //> on line 2 column 1 must be followed by a line break or EOF.]`,
-      )
-    })
-    it("should return RepeatBlockCloseNode if next string is a valid marker delimited by 2 line breaks", function () {
-      const ctx = buildContext({ template: "\n//>\n", insideRepeatBlock: true })
+    it("should return RepeatBlockCloseNode if next string is a valid marker", function () {
+      const ctx = buildContext({ template: "//>", insideRepeatBlock: true })
       const node = peekRepeatBlockClose(ctx)
 
       expect(node).toEqual<RepeatBlockCloseNode>({
         kind: NodeKind.RepeatBlockClose,
-        text: "\n//>",
+        text: "//>",
         index: 0,
         line: 1,
         column: 1,
-        length: 4,
+        length: 3,
         commentMarker: {
           kind: NodeKind.String,
           text: "//",
-          index: 1,
-          line: 2,
+          index: 0,
+          line: 1,
           column: 1,
           length: 2,
         },
-      })
-    })
-    it("should return RepeatBlockCloseNode if next string is a valid marker delimited by a line break and an EOF", function () {
-      const ctx = buildContext({ template: "\n//>", insideRepeatBlock: true })
-      const node = peekRepeatBlockClose(ctx)
-
-      expect(node).toEqual<RepeatBlockCloseNode>({
-        kind: NodeKind.RepeatBlockClose,
-        text: "\n//>",
-        index: 0,
-        line: 1,
-        column: 1,
-        length: 4,
-        commentMarker: {
+        closeMarker: {
           kind: NodeKind.String,
-          text: "//",
-          index: 1,
-          line: 2,
-          column: 1,
-          length: 2,
+          text: ">",
+          index: 2,
+          line: 1,
+          column: 3,
+          length: 1,
         },
       })
     })
   })
   describe("with indentation", function () {
-    it("should return null if after line break there is no comment marker", function () {
+    it("should return null if after indentation there is no comment marker", function () {
       const ctx = buildContext({
-        template: "\n  a//>\n",
+        template: "\n  a//>",
         insideRepeatBlock: true,
       })
       const node = peekRepeatBlockClose(ctx)
@@ -813,49 +695,14 @@ describe("peekRepeatBlockClose", function () {
     })
     it("should return null if after comment marker there is no >", function () {
       const ctx = buildContext({
-        template: "\n  //_\n",
+        template: "\n  //_",
         insideRepeatBlock: true,
       })
       const node = peekRepeatBlockClose(ctx)
 
       expect(node).toBeNull()
     })
-    it("should throw an Error if after the whole marker ther is no line break", function () {
-      const ctx = buildContext({
-        template: "\n  //>a",
-        insideRepeatBlock: true,
-      })
-      expect(() =>
-        peekRepeatBlockClose(ctx),
-      ).toThrowErrorMatchingInlineSnapshot(
-        `[Error: Close repeat block //> on line 2 column 3 must be followed by a line break or EOF.]`,
-      )
-    })
-    it("should return RepeatBlockCloseNode if next string is a valid marker delimited by 2 line breaks", function () {
-      const ctx = buildContext({
-        template: "\n  //>\n",
-        insideRepeatBlock: true,
-      })
-      const node = peekRepeatBlockClose(ctx)
-
-      expect(node).toEqual<RepeatBlockCloseNode>({
-        kind: NodeKind.RepeatBlockClose,
-        text: "\n  //>",
-        index: 0,
-        line: 1,
-        column: 1,
-        length: 6,
-        commentMarker: {
-          kind: NodeKind.String,
-          text: "//",
-          index: 3,
-          line: 2,
-          column: 3,
-          length: 2,
-        },
-      })
-    })
-    it("should return RepeatBlockCloseNode if next string is a valid marker delimited by a line break and an EOF", function () {
+    it("should return RepeatBlockCloseNode if next string is a valid marker", function () {
       const ctx = buildContext({
         template: "\n  //>",
         insideRepeatBlock: true,
@@ -877,6 +724,14 @@ describe("peekRepeatBlockClose", function () {
           column: 3,
           length: 2,
         },
+        closeMarker: {
+          kind: NodeKind.String,
+          text: ">",
+          index: 5,
+          line: 2,
+          column: 5,
+          length: 1,
+        },
       })
     })
   })
@@ -896,7 +751,7 @@ describe("peekRepeatBlock", function () {
     expect(node).toBeNull()
   })
   it("should throw an Error if repeat block does not close", function () {
-    const ctx = buildContext({ template: "//<\nabc = __def__//>" })
+    const ctx = buildContext({ template: "//<\nabc = __def__" })
 
     expect(() => peekRepeatBlock(ctx)).toThrowErrorMatchingInlineSnapshot(
       `[Error: Open repeat block //< on line 1 column 1 is not closed. Did you forget to add a //> ?]`,
@@ -904,10 +759,7 @@ describe("peekRepeatBlock", function () {
   })
   it("should throw an Error if repeat block does not contain interpolation", function () {
     const ctx = buildContext({
-      template: `
-//<
-abc = def
-//>`,
+      template: "//< abc = def //>",
     })
     expect(() => peekRepeatBlock(ctx)).toThrowErrorMatchingInlineSnapshot(
       `[Error: Repeat block on line 1 column 1 must have at least 1 interpolation.]`,
@@ -915,26 +767,20 @@ abc = def
   })
   it("should return RepeatBlockNode with children", function () {
     const ctx = buildContext({
-      template: `
-//<
-abc = __def__
-//>`.replaceAll("\r\n", "\n"), // this makes testing easier and OS agnostic
+      template: "\n//<\nabc = __def__\n//>",
     })
     const node = peekRepeatBlock(ctx)
 
     expect(node).toEqual<RepeatBlockNode>({
       kind: NodeKind.RepeatBlock,
-      text: `
-//<
-abc = __def__
-//>`.replaceAll("\r\n", "\n"),
+      text: "\n//<\nabc = __def__\n//>",
       index: 0,
       line: 1,
       column: 1,
       length: 22,
       open: {
         kind: NodeKind.RepeatBlockOpen,
-        text: `\n//<`,
+        text: "\n//<",
         index: 0,
         line: 1,
         column: 1,
@@ -947,24 +793,28 @@ abc = __def__
           column: 1,
           length: 2,
         },
+        openMarker: {
+          kind: NodeKind.String,
+          text: "<",
+          index: 3,
+          line: 2,
+          column: 3,
+          length: 1,
+        },
       },
       nodes: [
-        expect.objectContaining<Partial<LineBreakNode>>({
-          kind: NodeKind.LineBreak,
-          text: "\n",
-        }) as LineBreakNode,
-        expect.objectContaining<Partial<ConstantNode>>({
+        partialMatch({
           kind: NodeKind.Constant,
-          text: "abc = ",
-        }) as ConstantNode,
-        expect.objectContaining<Partial<InterpolationNode>>({
+          text: "\nabc = ",
+        }),
+        partialMatch({
           kind: NodeKind.Interpolation,
           text: "__def__",
-        }) as InterpolationNode,
+        }),
       ],
       close: {
         kind: NodeKind.RepeatBlockClose,
-        text: `\n//>`,
+        text: "\n//>",
         index: 18,
         line: 3,
         column: 14,
@@ -976,6 +826,14 @@ abc = __def__
           line: 4,
           column: 1,
           length: 2,
+        },
+        closeMarker: {
+          kind: NodeKind.String,
+          text: ">",
+          index: 21,
+          line: 4,
+          column: 3,
+          length: 1,
         },
       },
     })
@@ -996,23 +854,24 @@ describe("peekConstant", function () {
     expect(node).toBeNull()
   })
   it("should return ConstantNode with whole text until next syntax marker", function () {
-    const ctx = buildContext({ template: "abc = def\n" })
+    const ctx = buildContext({ template: "abc = def\n__efg__" })
     const node = peekConstant(ctx)
 
     expect(node).toEqual<ConstantNode>({
       kind: NodeKind.Constant,
-      text: "abc = def",
+      text: "abc = def\n",
       index: 0,
       line: 1,
       column: 1,
-      length: 9,
+      length: 10,
     })
   })
 })
 
 describe("parseTemplate", function () {
   test("general case", function () {
-    const nodes = parseTemplate(`const endpoints = {
+    const { nodes } = parseTemplate(
+      `const endpoints = {
   //<
   __namespace__: {
     //<
@@ -1020,7 +879,8 @@ describe("parseTemplate", function () {
     //>
   },
   //>
-}`)
+}`.replaceAll("\r\n", "\n"), // normalizing line breaks
+    )
     expect(nodes).toEqual<Node[]>([
       partialMatch({
         kind: NodeKind.Constant,
@@ -1035,10 +895,9 @@ describe("parseTemplate", function () {
     __action__: __action__Handler,
     //>
   },
-  //>`,
+  //>`.replaceAll("\r\n", "\n"), // normalizing line breaks
         nodes: [
-          partialMatch({ kind: NodeKind.LineBreak }),
-          partialMatch({ kind: NodeKind.Indentation, text: "  " }),
+          partialMatch({ kind: NodeKind.Constant, text: "\n  " }),
           partialMatch({
             kind: NodeKind.Interpolation,
             expression: partialMatch<InterpolationExpressionNode>({
@@ -1054,8 +913,7 @@ describe("parseTemplate", function () {
     __action__: __action__Handler,
     //>`,
             nodes: [
-              partialMatch({ kind: NodeKind.LineBreak }),
-              partialMatch({ kind: NodeKind.Indentation, text: "    " }),
+              partialMatch({ kind: NodeKind.Constant, text: "\n    " }),
               partialMatch({
                 kind: NodeKind.Interpolation,
                 expression: partialMatch<InterpolationExpressionNode>({
@@ -1071,26 +929,21 @@ describe("parseTemplate", function () {
                   text: "action",
                 }),
               }),
-              partialMatch({ kind: NodeKind.Constant, text: "Handler," }),
+              partialMatch({ kind: NodeKind.Constant, text: `Handler,` }),
             ],
           }),
-          partialMatch({ kind: NodeKind.LineBreak }),
-          partialMatch({ kind: NodeKind.Indentation, text: "  " }),
-          partialMatch({ kind: NodeKind.Constant, text: "}," }),
+          partialMatch({ kind: NodeKind.Constant, text: "\n  }," }),
         ],
       }),
       partialMatch({
-        kind: NodeKind.LineBreak,
-      }),
-      partialMatch({
         kind: NodeKind.Constant,
-        text: "}",
+        text: "\n}",
       }),
     ])
   })
 })
 
-function partialMatch<TNode extends Node>(values: Partial<TNode>) {
+function partialMatch<TNode extends Node>(values: Partial<Node>) {
   return expect.objectContaining(values) as TNode
 }
 
