@@ -1,0 +1,25 @@
+{
+  "name": "@prigas/ts-morph",
+  "private": false,
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@ts-morph/bootstrap": "^0.25.0",
+    "ts-morph": "^23.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/json-schema": "^7.0.15",
+    "@types/node": "^22.7.2",
+    "esbuild": "^0.24.0",
+    "nodemon": "^3.1.7",
+    "tsx": "^4.19.1",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.1.1"
+  }
+}

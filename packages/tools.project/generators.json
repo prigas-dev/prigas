@@ -14,6 +14,11 @@
       "factory": "./src/generators/exe/generator",
       "schema": "./src/generators/exe/schema.json",
       "description": "Generate an executor on tools.project."
+    },
+    "app": {
+      "factory": "./src/generators/app/generator",
+      "schema": "./src/generators/app/schema.json",
+      "description": "Generate an application project"
     }
   }
 }
