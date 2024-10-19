@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {},
+  "include": [
+    "vite.*.ts",
+    "vitest.*.ts",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/**/*"
+  ],
+  "files": ["./node_modules/vitest/globals.d.ts"],
+  "exclude": []
+}

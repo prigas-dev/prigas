@@ -1,9 +1,9 @@
 import { Tree } from "@nx/devkit"
 import * as path from "path"
 import { generateProject } from "../../lib/generate-project"
-import { AppGeneratorOptions } from "./schema"
+import { LibGeneratorOptions } from "./schema"
 
-export async function appGenerator(tree: Tree, options: AppGeneratorOptions) {
+export async function libGenerator(tree: Tree, options: LibGeneratorOptions) {
   await generateProject({
     name: options.name,
     templateFolder: path.join(__dirname, "files"),
@@ -11,4 +11,4 @@ export async function appGenerator(tree: Tree, options: AppGeneratorOptions) {
   })
 }
 
-export default appGenerator
+export default libGenerator

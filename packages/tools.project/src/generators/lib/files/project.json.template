@@ -1,0 +1,35 @@
+{
+  "name": "<%= packageName %>",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "<%= projectRoot %>/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "cwd": "dist/<%= packageName %>",
+        "commands": [
+          "npm publish --access public"
+        ],
+        "parallel": false
+      }
+    },
+    "build": {
+      "executor": "tools.project:vite-build",
+      "defaultConfiguration": "production",
+      "dependsOn": [],
+      "configurations": {
+        "production": {
+          "dev": false
+        },
+        "development": {
+          "dev": true
+        }
+      }
+    }
+  }
+}

@@ -8,10 +8,14 @@
     "moduleResolution": "NodeNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
-
-    /* Linting */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["${configDir}/src/*"],
+      "libs.result": ["./packages/libs.result/src/index.ts"]
+    },
     "strict": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": false
   },
   "exclude": [
     "**/vite.*.ts",

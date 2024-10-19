@@ -1,9 +1,10 @@
 packages:
+  - packages/@prigas.generator
+  - packages/@prigas.restless
   - packages/@prigas.sample
   - packages/@prigas.server
   - packages/@prigas.server.api
   - packages/@prigas.server.frontend
-  - packages/@prigas.ts-morph
   - packages/libs.result
   - packages/prigas
   - packages/tools.project

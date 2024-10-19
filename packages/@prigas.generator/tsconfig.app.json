@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "declarationDir": "../../dist/@prigas/generator",
+    "emitDeclarationOnly": true
+  },
+  "include": ["src"]
+}

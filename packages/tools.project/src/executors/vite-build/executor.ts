@@ -1,12 +1,18 @@
-import { ExecutorContext, PromiseExecutor, readJsonFile } from "@nx/devkit"
+import {
+  ExecutorContext,
+  logger,
+  PromiseExecutor,
+  readJsonFile,
+} from "@nx/devkit"
 import { JSONSchemaForNPMPackageJsonFiles as PackageJson } from "@schemastore/package"
-import esbuild, { BuildOptions as EsbuildOptions } from "esbuild"
-import assert from "node:assert"
-import { cp, writeFile } from "node:fs/promises"
-import path from "node:path"
-import { EsbuildExecutorOptions } from "./schema"
+import assert from "assert"
+import { execSync } from "child_process"
+import { cp, rm, writeFile } from "fs/promises"
+import path from "path"
+import { copyDirectory } from "../../lib/copy-directory"
+import { ViteBuildExecutorOptions } from "./schema"
 
-const runExecutor: PromiseExecutor<EsbuildExecutorOptions> = async (
+const runExecutor: PromiseExecutor<ViteBuildExecutorOptions> = async (
   options,
   ctx,
 ) => {
@@ -18,25 +24,31 @@ const runExecutor: PromiseExecutor<EsbuildExecutorOptions> = async (
   assert(projectConfiguration, "projectConfiguration not provided")
 
   const projectRoot = path.join(ctx.root, projectConfiguration.root)
-  const { esbuildConfig } = (await import(
-    path.join(projectRoot, "esbuild.config.mjs")
-  )) as {
-    esbuildConfig: EsbuildOptions
-  }
+  const distDir = path.join(ctx.root, "dist")
+  const projectDistDir = path.join(distDir, projectName)
 
-  await esbuild.build({
-    ...esbuildConfig,
-    absWorkingDir: projectRoot,
-    minify: !options.dev,
+  const vite = await import("vite")
+  const viteConfigFile = path.join(projectRoot, "vite.config.ts")
+  await vite.build({
+    configFile: viteConfigFile,
   })
+
+  logger.info("Generating declaration files")
+  execSync("pnpm tsc --project tsconfig.app.json", { cwd: projectRoot })
+
+  // because tsc generates .d.ts files at dist/{packageName}/{projectRoot}
+  // we need to move files up
+  await copyDirectory(
+    path.join(projectDistDir, projectConfiguration.root),
+    path.join(projectDistDir),
+  )
+  await rm(path.join(projectDistDir, "packages"), { recursive: true })
 
   const packageJson = readJsonFile<PackageJson>(
     path.join(projectRoot, "package.json"),
   )
-  fixDependencies(packageJson, esbuildConfig, ctx)
 
-  const distDir = path.join(ctx.root, "dist")
-  const projectDistDir = path.join(distDir, projectName)
+  await fixDependencies(packageJson, viteConfigFile, ctx)
   await writeFile(
     path.join(projectDistDir, "package.json"),
     JSON.stringify(packageJson, null, 2),
@@ -68,26 +80,39 @@ const runExecutor: PromiseExecutor<EsbuildExecutorOptions> = async (
  * @param esbuildConfig the esbuild options object used to determine which dependencies are kept
  * @returns
  */
-function fixDependencies(
+async function fixDependencies(
   packageJson: PackageJson,
-  esbuildConfig: EsbuildOptions,
+  viteConfigFile: string,
   ctx: ExecutorContext,
 ) {
   if (packageJson.dependencies == null) {
     return
   }
 
+  const vite = await import("vite")
+  const viteConfig = await vite.loadConfigFromFile(
+    {
+      command: "build",
+      mode: "production",
+      isPreview: false,
+      isSsrBuild: false,
+    },
+    viteConfigFile,
+  )
+
   const projects = ctx.projectsConfigurations?.projects
   assert(projects, "projectConfiguration not provided")
 
   /**
-   * When bundle is true, we need to remove all dependencies
-   * from the package.json except those declared on "external"
-   * {@link:https://esbuild.github.io/api/#external}
+   * We need to remove all dependencies from the
+   * package.json except those declared on "external"
+   * {@link:https://rollupjs.org/configuration-options/#external}
    *
    */
-  if (esbuildConfig.bundle) {
-    const dependenciesToKeep = esbuildConfig.external ?? []
+  const dependenciesToKeep =
+    viteConfig?.config.build?.rollupOptions?.external ?? []
+
+  if (Array.isArray(dependenciesToKeep)) {
     const filteredDependencies = filterObject(
       packageJson.dependencies,
       (dependency) => dependenciesToKeep.includes(dependency),

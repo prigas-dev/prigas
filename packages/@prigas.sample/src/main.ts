@@ -1,5 +1,6 @@
-async function seila() {
-  console.log("seila")
-}
+import { createServer } from "./server.js"
 
-await seila()
+const server = createServer()
+server.listen(8090, function () {
+  console.log("Server started. http://localhost:8090")
+})

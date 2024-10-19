@@ -1,7 +1,7 @@
 {
-  "name": "@prigas/ts-morph",
+  "name": "@prigas/generator",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/@prigas.ts-morph/src",
+  "sourceRoot": "packages/@prigas.generator/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,15 +9,15 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "cwd": "dist/@prigas/ts-morph",
+        "cwd": "dist/@prigas/generator",
         "commands": ["npm publish --access public"],
         "parallel": false
       }
     },
     "build": {
-      "executor": "tools.project:esbuild",
+      "executor": "tools.project:vite-build",
       "defaultConfiguration": "production",
-      "dependsOn": ["clean"],
+      "dependsOn": [],
       "configurations": {
         "production": {
           "dev": false
@@ -25,12 +25,6 @@
         "development": {
           "dev": true
         }
-      }
-    },
-    "clean": {
-      "executor": "tools.project:clean",
-      "options": {
-        "dir": "dist/@prigas/ts-morph"
       }
     }
   }

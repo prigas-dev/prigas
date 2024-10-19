@@ -1,13 +1,12 @@
 import { randomUUID } from "node:crypto"
+import { RequestContext } from "../lib/request-context.js"
 
 interface AddTodoInput {
   title: string
 }
 
-type Context = string
-
 export class AddTodo {
-  async addTodo(input: AddTodoInput, _: Context) {
+  async execute(input: AddTodoInput, _: RequestContext) {
     console.log(input)
 
     const output = {

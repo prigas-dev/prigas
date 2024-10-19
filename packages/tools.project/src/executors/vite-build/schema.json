@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Vite build executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "dev": {
+      "type": "boolean",
+      "description": "Build for dev (true) or production (false).",
+      "default": false
+    },
+    "assets": {
+      "type": "array",
+      "description": "Files to be copied to output folder as is",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": []
+}

@@ -7,7 +7,14 @@ import tsconfigPaths from "vite-tsconfig-paths"
 // https://vitejs.dev/config/
 export default defineConfig((env) => {
   const config: UserConfig = {
-    plugins: [tsconfigPaths(), TanStackRouterVite(), react()],
+    root: import.meta.dirname,
+    plugins: [
+      tsconfigPaths({
+        projects: ["./tsconfig.json"],
+      }),
+      TanStackRouterVite(),
+      react(),
+    ],
     build: {
       outDir: "../../dist/@prigas/server/frontend",
       emptyOutDir: true,

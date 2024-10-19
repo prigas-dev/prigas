@@ -1,0 +1,17 @@
+{
+  "name": "<%= packageName %>",
+  "private": false,
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^5.4.1",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.1.1"
+  }
+}

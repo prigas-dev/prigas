@@ -9,6 +9,11 @@
       "implementation": "./src/executors/clean/executor",
       "schema": "./src/executors/clean/schema.json",
       "description": "Clean a directory"
+    },
+    "vite-build": {
+      "implementation": "./src/executors/vite-build/executor",
+      "schema": "./src/executors/vite-build/schema.json",
+      "description": "Vite build"
     }
   }
 }

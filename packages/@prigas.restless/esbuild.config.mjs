@@ -3,7 +3,7 @@
  */
 export const esbuildConfig = {
   entryPoints: ["./src/main.ts"],
-  outdir: "../../dist/@prigas/ts-morph/src",
+  outdir: "../../dist/@prigas/restless/src",
   bundle: true,
   format: "esm",
   platform: "node",
