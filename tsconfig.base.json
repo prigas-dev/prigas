@@ -11,7 +11,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["${configDir}/src/*"],
-      "libs.result": ["./packages/libs.result/src/index.ts"]
+      "libs.result": ["./packages/libs.result/src/index.ts"],
+      "@prigas/generator": ["./packages/@prigas.generator/src/index.ts"]
     },
     "strict": true,
     "forceConsistentCasingInFileNames": true,

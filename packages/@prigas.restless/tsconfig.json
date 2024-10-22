@@ -1,10 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "paths": {
-      "libs.result": ["../libs.result/src/index.ts"]
-    }
-  },
+  "compilerOptions": {},
   "files": [],
   "references": [
     {
@@ -13,5 +9,14 @@
     {
       "path": "./tsconfig.spec.json"
     }
+  ],
+  "exclude": [
+    "**/vite.*.ts",
+    "**/vitest.*.ts",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "templates/**"
   ]
 }

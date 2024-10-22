@@ -3,9 +3,9 @@ import { createContext, RequestContext } from "./lib/request-context.js"
 //<
 import {
   //<
-  {{ operationClass }},
+  __operationClass__,
   //>
-} from "{{ operationModulePath }}"
+} from "__operationModulePath__"
 //>
 
 export function createServer(options: http.ServerOptions = {}) {
@@ -83,6 +83,7 @@ export function createServer(options: http.ServerOptions = {}) {
         try {
           // Validation of the body object is task for the operation handler
           // by using the @parse decorator
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
           output = await operationHandler.execute(bodyObject as any, context)
         } catch {
           res.writeHead(500)
@@ -114,7 +115,7 @@ export function createServer(options: http.ServerOptions = {}) {
 
 const map = new Map([
   //<
-  ["{{ operationApiPath }}", {{ operationClass }}],
+  ["__operationApiPath__", __operationClass__],
   //>
 ])
 

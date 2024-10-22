@@ -1,6 +1,7 @@
 import http from "http"
 import { createContext, RequestContext } from "./lib/request-context.js"
 import { AddTodo } from "./operations/add-todo.js"
+import { RemoveTodo } from "./operations/remove-todo.js"
 
 export function createServer(options: http.ServerOptions = {}) {
   const server = http.createServer(
@@ -107,7 +108,10 @@ export function createServer(options: http.ServerOptions = {}) {
   return server
 }
 
-const map = new Map([["/api/addTodo", AddTodo]])
+const map = new Map([
+  ["/api/AddTodo", AddTodo],
+  ["/api/RemoveTodo", RemoveTodo],
+])
 
 function getOperationByPath(path: string) {
   if (path.length === 0) {
@@ -126,8 +130,7 @@ function getOperationByPath(path: string) {
 }
 
 async function streamToString(stream: NodeJS.ReadableStream) {
-  // lets have a ReadableStream as a stream variable
-  const chunks = []
+  const chunks: Buffer[] = []
 
   for await (const chunk of stream) {
     chunks.push(Buffer.from(chunk))
